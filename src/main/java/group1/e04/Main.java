@@ -12,9 +12,9 @@ public class Main {
 
     public static void main(String[] args) {
         JdbcStudentRepository repo = new JdbcStudentRepository(connection);
-        System.out.println(repo.findAll().toString());
-        System.out.println(repo.findById("B21DCAT113").toString());
-        repo.deleteById("B21DCAT013");
+        // System.out.println(repo.findAll().toString());
+        // System.out.println(repo.findById("B21DCAT113").toString());
+        // repo.deleteById("B21DCAT013");
         repo.save(new Student("B21DCAT013", "Nguyen Nhat Minh", "", "", "", "E21CQCN04"));
         System.out.println(repo.findAll().toString());
     }
