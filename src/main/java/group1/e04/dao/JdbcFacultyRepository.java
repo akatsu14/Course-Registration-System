@@ -110,7 +110,7 @@ public class JdbcFacultyRepository implements DataRepository<Faculty> {
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(
-                    "SELECT * FROM course_system_management.student");
+                    "SELECT * FROM course_system_management.faculty");
             ResultSet result = statement.executeQuery();
             while (result.next()) {
                 faculties.add(new Faculty(
@@ -119,7 +119,7 @@ public class JdbcFacultyRepository implements DataRepository<Faculty> {
                         result.getString("address"),
                         result.getString("phone"),
                         result.getString("email"),
-                        result.getString("class")));
+                        result.getString("department")));
             }
             return faculties;
         } catch (SQLException e) {
