@@ -24,7 +24,7 @@ public class JdbcFacultyRepository implements DataRepository<Faculty> {
             PreparedStatement preparedStatement;
             try {
                 preparedStatement = connection.prepareStatement(
-                        "INSERT INTO course_system_management.student VALUES (?, ?, ?, ?, ?, ?)");
+                        "INSERT INTO course_system_management.faculty VALUES (?, ?, ?, ?, ?, ?)");
                 preparedStatement.setString(1, faculty.getId());
                 preparedStatement.setString(2, faculty.getName());
                 preparedStatement.setString(3, faculty.getAddress());
