@@ -65,7 +65,7 @@ public class JdbcFacultyRepository implements DataRepository<Faculty> {
                 faculty.setAddress(resultSet.getString("address"));
                 faculty.setPhone(resultSet.getString("phone"));
                 faculty.setEmail(resultSet.getString("email"));
-                faculty.setDepartment(resultSet.getString("class"));
+                faculty.setDepartment(resultSet.getString("department"));
             }
             if (flag) {
                 return faculty;
