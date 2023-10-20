@@ -1,4 +1,4 @@
-package group1.e04.dao;
+package main.java.group1.e04.dao;
 
 public class JdbcAccountRepository {
     
