@@ -1,16 +1,24 @@
 package group1.e04.data;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import java.util.List;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
+@NoArgsConstructor
 public class Course {
     
-    private final String id;
-    private final String name;
-    private final String credit;
+    private String id;
+    private String name;
+    private String credit;
+    private String facultyId;
+    private List<String> studentIds;
+
+    public Course(String id, String name, String credit, String faculty_id) {
+        this.id = id;
+        this.name = name;
+        this.credit = credit;
+        this.facultyId = faculty_id;
+    }
 }

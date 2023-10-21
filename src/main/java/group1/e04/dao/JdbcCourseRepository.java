@@ -7,32 +7,30 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import group1.e04.data.Student;
+import group1.e04.data.Course;
 
-public class JdbcStudentRepository implements DataRepository<Student> {
+public class JdbcCourseRepository implements DataRepository<Course> {
 
     private Connection connection;
 
-    public JdbcStudentRepository(Connection connection) {
+    public JdbcCourseRepository(Connection connection) {
         this.connection = connection;
     }
 
     @Override
-    public boolean save(Student student) {
-        if (findById(student.getId()) != null) {
+    public boolean save(Course course) {
+        if (this.findById(course.getId()) != null) {
             return false;
         } else {
             PreparedStatement statement;
             try {
                 statement = connection.prepareStatement(
-                    "INSERT INTO student VALUES(?, ?, ?, ?, ?, ?)"
+                    "INSERT INTO course VALUES(?, ?, ?, ?)"
                 );
-                statement.setString(1, student.getId());
-                statement.setString(2, student.getName());
-                statement.setString(3, student.getAddress());
-                statement.setString(4, student.getPhone());
-                statement.setString(5, student.getEmail());
-                statement.setString(6, student.get_class());
+                statement.setString(1, course.getId());
+                statement.setString(2, course.getName());
+                statement.setString(3, course.getCredit());
+                statement.setString(4, course.getFacultyId());
                 statement.executeUpdate();
                 connection.commit();
                 return true;
@@ -49,28 +47,26 @@ public class JdbcStudentRepository implements DataRepository<Student> {
     }
 
     @Override
-    public Student findById(String id) {
+    public Course findById(String id) {
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(
-                "SELECT * FROM student WHERE id=?"
+                "SELECT * FROM course WHERE id=?"  
             );
             statement.setString(1, id);
-            Student student = new Student();
-            boolean flag = false;
             ResultSet resultSet = statement.executeQuery();
+            boolean flag = false;
+            Course course = new Course();
             while (resultSet.next()) {
                 flag = true;
-                student.setId(resultSet.getString("id"));
-                student.setName(resultSet.getString("name"));
-                student.setAddress(resultSet.getString("address"));
-                student.setPhone(resultSet.getString("phone"));
-                student.setEmail(resultSet.getString("email"));
-                student.set_class(resultSet.getString("class"));
+                course.setId(resultSet.getString("id"));
+                course.setName(resultSet.getString("name"));
+                course.setCredit(resultSet.getString("credit"));
+                course.setFacultyId(resultSet.getString("faculty_id"));
                 break;
             }
             if (flag) {
-                return student;
+                return course;
             } else {
                 return null;
             }
@@ -81,25 +77,23 @@ public class JdbcStudentRepository implements DataRepository<Student> {
     }
 
     @Override
-    public List<Student> findAll() {
+    public List<Course> findAll() {
         PreparedStatement statement;
-        List<Student> students = new ArrayList<>();
         try {
             statement = connection.prepareStatement(
-                "SELECT * FROM student"
+                "SELECT * FROM course"
             );
             ResultSet resultSet = statement.executeQuery();
+            List<Course> courses = new ArrayList<>();
             while (resultSet.next()) {
-                students.add(new Student(
+                courses.add(new Course(
                     resultSet.getString("id"),
                     resultSet.getString("name"),
-                    resultSet.getString("address"),
-                    resultSet.getString("phone"),
-                    resultSet.getString("email"),
-                    resultSet.getString("class")
+                    resultSet.getString("credit"),
+                    resultSet.getString("faculty_id")
                 ));
             }
-            return students;
+            return courses;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -107,29 +101,28 @@ public class JdbcStudentRepository implements DataRepository<Student> {
     }
 
     @Override
-    public boolean update(Student student) {
+    public boolean update(Course course) {
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(
-                "UPDATE student SET name=?, address=?, phone=?, email=?, class=? WHERE id=?"
+                "UPDATE course SET name=?, credit=?, faculty_id=? WHERE id=?"
             );
-            statement.setString(1, student.getName());
-            statement.setString(2, student.getAddress());
-            statement.setString(3, student.getPhone());
-            statement.setString(4, student.getEmail());
-            statement.setString(5, student.get_class());
-            statement.setString(6, student.getId());
+            statement.setString(1, course.getName());
+            statement.setString(2, course.getCredit());
+            statement.setString(3, course.getFacultyId());
+            statement.setString(4, course.getId());
             statement.executeUpdate();
             connection.commit();
             return true;
         } catch (SQLException e) {
             try {
                 connection.rollback();
-            } catch (SQLException e1) {
+            } catch (Exception e1) {
                 e1.printStackTrace();
-            }
+            }      
             e.printStackTrace();
         }
         return false;
     }
+    
 }
