@@ -36,6 +36,7 @@ create table course (
 	id varchar(255) primary key not null,
     name varchar(50) not null,
     credit int not null,
+    max_student int not null,
     faculty_id varchar(255),
     foreign key (faculty_id) references faculty(id)
 );
