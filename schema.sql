@@ -44,5 +44,7 @@ create table register (
 	student_id varchar(255),
     course_id varchar(255),
     foreign key (student_id) references student(id),
-    foreign key (course_id) references course(id)
+    foreign key (course_id) references course(id),
+    constraint primary key(student_id, course_id)
 );
+

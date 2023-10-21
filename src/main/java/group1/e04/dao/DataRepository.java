@@ -8,4 +8,5 @@ public interface DataRepository <T> {
     T findById(String id);
     List<T> findAll();
     boolean update(T t);
+    default T findByUsername(String username) {return null;}
 }

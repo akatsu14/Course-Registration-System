@@ -7,15 +7,12 @@ import java.sql.SQLException;
 
 import group1.e04.data.Account;
 import group1.e04.data.Account.Role;
+import lombok.AllArgsConstructor;
 
-
+@AllArgsConstructor
 public class JdbcAccountRepository {
 
     private Connection connection;
-
-    public JdbcAccountRepository(Connection connection) {
-        this.connection = connection;
-    }
 
     public Account findById(String username) {
         PreparedStatement statement;
