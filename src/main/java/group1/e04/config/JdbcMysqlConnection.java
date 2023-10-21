@@ -17,7 +17,6 @@ public class JdbcMysqlConnection {
             connection.setAutoCommit(false);
             return connection;
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;

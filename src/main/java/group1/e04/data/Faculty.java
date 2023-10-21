@@ -16,8 +16,8 @@ public class Faculty extends Person {
     private String department;
 
     public Faculty(String id, String name, String address, String phone, String email, String department,
-            List<Course> courses) {
-        super(id, name, address, phone, email, courses);
+            List<String> courseIds) {
+        super(id, name, address, phone, email, courseIds);
         this.department = department;
     }
 }

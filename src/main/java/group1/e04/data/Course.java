@@ -11,7 +11,7 @@ public class Course {
 
     private String id;
     private String name;
-    private String credit;
+    private int credit;
     private String facultyName;
     private int maxStudent;
     private int currentStudent;

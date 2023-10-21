@@ -16,13 +16,13 @@ public abstract class Person {
     private String address;
     private String phone;
     private String email;
-    private List<Course> courses;
+    private List<String> courseIds;
 
-    public void addCourse(Course course) {
-        this.courses.add(course);
+    public void addCourse(String courseId) {
+        this.courseIds.add(courseId);
     }
 
-    public void removeCourse(Course course) {
-        this.courses.remove(course);
+    public void removeCourse(String courseId) {
+        this.courseIds.remove(courseId);
     }
 }

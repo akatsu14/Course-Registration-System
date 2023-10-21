@@ -18,20 +18,14 @@ public class JdbcAccountRepository {
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(
-                "SELECT * FROM account WHERE username=?"  
-            );
+                    "SELECT * FROM account WHERE username=?");
             statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
             Account account = new Account();
-            boolean flag = false;
-            while (resultSet.next()) {
+            if (resultSet.next()) {
                 account.setUsername(resultSet.getString("username"));
                 account.setPassword(resultSet.getString("password"));
                 account.setRole(Role.valueOf(resultSet.getString("role")));
-                flag = true;
-                break;
-            }
-            if (flag) {
                 return account;
             } else {
                 return null;
@@ -46,23 +40,20 @@ public class JdbcAccountRepository {
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(
-                "INSERT INTO account VALUES(?, ?, ?)"
-            );
+                    "INSERT INTO account VALUES(?, ?, ?)");
             statement.setString(1, account.getUsername());
             statement.setString(2, account.getPassword());
             statement.setString(3, account.getRole().name());
             statement.executeUpdate();
             if (account.getRole().compareTo(Role.STUDENT) == 0) {
                 PreparedStatement statement2 = connection.prepareStatement(
-                    "UPDATE student SET account_id=? WHERE id=?"
-                );
+                        "UPDATE student SET account_id=? WHERE id=?");
                 statement2.setString(1, account.getUsername());
                 statement2.setString(2, userId);
                 statement2.executeUpdate();
             } else if (account.getRole().compareTo(Role.FACULTY) == 0) {
                 PreparedStatement statement2 = connection.prepareStatement(
-                    "UPDATE faculty SET account_id=? WHERE id=?"
-                );
+                        "UPDATE faculty SET account_id=? WHERE id=?");
                 statement2.setString(1, account.getUsername());
                 statement2.setString(2, userId);
                 statement2.executeUpdate();
@@ -84,8 +75,7 @@ public class JdbcAccountRepository {
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(
-                "UPDATE account SET password=? WHERE username=?"
-            );
+                    "UPDATE account SET password=? WHERE username=?");
             statement.setString(1, password);
             statement.setString(2, username);
             statement.executeUpdate();
