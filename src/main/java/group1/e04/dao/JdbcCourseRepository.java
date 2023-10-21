@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import group1.e04.data.Course;
+import group1.e04.model.Course;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

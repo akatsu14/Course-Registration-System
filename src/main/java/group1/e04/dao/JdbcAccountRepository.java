@@ -5,8 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import group1.e04.data.Account;
-import group1.e04.data.Account.Role;
+import group1.e04.model.Account;
+import group1.e04.model.Account.Role;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

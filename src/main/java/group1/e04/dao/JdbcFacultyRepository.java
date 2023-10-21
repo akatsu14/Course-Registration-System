@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import group1.e04.data.Faculty;
+import group1.e04.model.Faculty;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
