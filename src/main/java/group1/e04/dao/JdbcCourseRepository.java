@@ -23,9 +23,11 @@ public class JdbcCourseRepository implements DataRepository<Course> {
             statement.setInt(3, course.getCredit());
             statement.setInt(4, course.getMaxStudent());
             int rowEffected = statement.executeUpdate();
-            if (rowEffected > 0) {
+            if (rowEffected == 1) {
                 connection.commit();
                 return true;
+            } else {
+                connection.rollback();
             }
         } catch (SQLException e) {
             try {
@@ -53,7 +55,7 @@ public class JdbcCourseRepository implements DataRepository<Course> {
         return null;
     }
 
-    private int countStudentInCourse(String courseId) {
+    private int countStudent(String courseId) {
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "SELECT COUNT(student_id) AS count_student FROM register WHERE course_id=?");
@@ -84,7 +86,7 @@ public class JdbcCourseRepository implements DataRepository<Course> {
                 course.setFacultyName(findFacultyNameById(
                         resultset.getString("faculty_id")));
                 course.setCurrentStudent(
-                        countStudentInCourse(resultset.getString("id")));
+                        countStudent(resultset.getString("id")));
                 return course;
             }
         } catch (SQLException e) {
@@ -104,31 +106,11 @@ public class JdbcCourseRepository implements DataRepository<Course> {
             statement.setInt(3, course.getMaxStudent());
             statement.setString(4, course.getId()); 
             int rowEffected = statement.executeUpdate();
-            if (rowEffected > 0) {
+            if (rowEffected == 1) {
                 connection.commit();
                 return true;
-            }
-        } catch (SQLException e) {
-            try {
+            } else {
                 connection.rollback();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public boolean registerCourseForStudent(String studentId, String courseId) {
-        try {
-            PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO register VALUES(?, ?)");
-            statement.setString(1, studentId);
-            statement.setString(2, courseId);
-            int rowEffected = statement.executeUpdate();
-            if (rowEffected > 0) {
-                connection.commit();
-                return true;
             }
         } catch (SQLException e) {
             try {
