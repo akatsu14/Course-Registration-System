@@ -1,18 +1,23 @@
 package group1.e04.data;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.List;
 
-@Data
-@AllArgsConstructor
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
 @NoArgsConstructor
-public class Student {
-    
-    private String id;
-    private String name;
-    private String address;
-    private String phone;
-    private String email;
+@ToString
+public class Student extends Person {
+
     private String _class;
+
+    public Student(String id, String name, String address, String phone, String email, String _class,
+            List<String> courseIds) {
+        super(id, name, address, phone, email, courseIds);
+        this._class = _class;
+    }
 }

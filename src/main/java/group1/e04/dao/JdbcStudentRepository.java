@@ -8,99 +8,79 @@ import java.util.ArrayList;
 import java.util.List;
 
 import group1.e04.data.Student;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class JdbcStudentRepository implements DataRepository<Student> {
 
     private Connection connection;
 
-    public JdbcStudentRepository(Connection connection) {
-        this.connection = connection;
-    }
-
-    @Override
-    public boolean save(Student student) {
-        if (this.findById(student.getId()) != null) {
-            return false;
-        } else {
-            PreparedStatement preparedStatement;
-            try {
-                preparedStatement = connection.prepareStatement(
-                    "INSERT INTO course_system_management.student VALUES (?, ?, ?, ?, ?, ?)"  
-                );
-                preparedStatement.setString(1, student.getId());
-                preparedStatement.setString(2, student.getName());
-                preparedStatement.setString(3, student.getAddress());
-                preparedStatement.setString(4, student.getPhone());
-                preparedStatement.setString(5, student.getEmail());
-                preparedStatement.setString(6, student.get_class());
-                preparedStatement.executeUpdate();
-                connection.commit();
-                return true;
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                try {
-                    connection.rollback();
-                } catch (SQLException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-                e.printStackTrace();
-            }
-            return false;
-        }
-    }
-
-    @Override
-    public Student findById(String id) {
+    public List<String> findAllCoursesAreLearning(String studentId) {
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(
-                "SELECT * FROM course_system_management.student WHERE id = ?"
-            );
-            statement.setString(1, id);
+                    "SELECT course_id FROM register WHERE student_id=?");
+            statement.setString(1, studentId);
             ResultSet resultSet = statement.executeQuery();
-            Student student = new Student();
-            boolean flag = false;
+            List<String> courseIds = new ArrayList<>();
             while (resultSet.next()) {
-                flag = true;
-                student.setId(resultSet.getString("id"));
-                student.setName(resultSet.getString("name"));
-                student.setAddress(resultSet.getString("address"));
-                student.setPhone(resultSet.getString("phone"));
-                student.setEmail(resultSet.getString("email"));
-                student.set_class(resultSet.getString("class"));
+                courseIds.add(resultSet.getString("course_id"));
             }
-            if (flag) {
-                return student;
-            } else {
-                return null;
-            }
+            return courseIds;
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
     }
 
     @Override
-    public boolean deleteById(String id) {
+    public Student findByUsername(String username) {
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(
-                "DELETE FROM course_system_management.student WHERE id = ?"
-            );
-            statement.setString(1, id);
-            statement.executeUpdate();
-            connection.commit();
-            return true;
+                    "SELECT * FROM student WHERE account_id=?");
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+            Student student = new Student();
+            if (resultSet.next()) {
+                student.setId(resultSet.getString("id"));
+                student.setName(resultSet.getString("name"));
+                student.setAddress(resultSet.getString("address"));
+                student.setPhone(resultSet.getString("phone"));
+                student.setEmail(resultSet.getString("email"));
+                student.set_class(resultSet.getString("class"));
+                student.setCourseIds(findAllCoursesAreLearning(student.getId()));
+                return student;
+            } else {
+                return null;
+            }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean save(Student student) {
+        PreparedStatement statement;
+        try {
+            statement = connection.prepareStatement(
+                    "INSERT INTO student(id, name, address, phone, email, class) VALUES(?, ?, ?, ?, ?, ?)");
+            statement.setString(1, student.getId());
+            statement.setString(2, student.getName());
+            statement.setString(3, student.getAddress());
+            statement.setString(4, student.getPhone());
+            statement.setString(5, student.getEmail());
+            statement.setString(6, student.get_class());
+            int rowEffected = statement.executeUpdate();
+            if (rowEffected > 0) {
+                connection.commit();
+                return true;
+            }
+        } catch (SQLException e) {
             try {
-                if (connection != null) {
-                    connection.rollback();
-                }
+                connection.rollback();
             } catch (SQLException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
             e.printStackTrace();
@@ -109,30 +89,54 @@ public class JdbcStudentRepository implements DataRepository<Student> {
     }
 
     @Override
-    public List<Student> findAll() {
-        List<Student> students = new ArrayList<>();
+    public Student findById(String id) {
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(
-                "SELECT * FROM course_system_management.student"
-            );
-            ResultSet result = statement.executeQuery();
-            while (result.next()) {
-                students.add(new Student(
-                    result.getString("id"), 
-                    result.getString("name"), 
-                    result.getString("address"), 
-                    result.getString("phone"), 
-                    result.getString("email"), 
-                    result.getString("class")
-                ));
+                    "SELECT * FROM student WHERE id=?");
+            statement.setString(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            Student student = new Student();
+            if (resultSet.next()) {
+                student.setId(resultSet.getString("id"));
+                student.setName(resultSet.getString("name"));
+                student.setAddress(resultSet.getString("address"));
+                student.setPhone(resultSet.getString("phone"));
+                student.setEmail(resultSet.getString("email"));
+                student.set_class(resultSet.getString("class"));
+                student.setCourseIds(findAllCoursesAreLearning(student.getId()));
+                return student;
+            } else {
+                return null;
             }
-            return students;
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
     }
 
+    @Override
+    public boolean update(Student student) {
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE student SET name=?, address=?, phone=?, email=?, class=? WHERE id=?");
+            statement.setString(1, student.getName());
+            statement.setString(2, student.getAddress());
+            statement.setString(3, student.getPhone());
+            statement.setString(4, student.getEmail());
+            statement.setString(5, student.get_class());
+            statement.setString(6, student.getId());
+            statement.executeUpdate();
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

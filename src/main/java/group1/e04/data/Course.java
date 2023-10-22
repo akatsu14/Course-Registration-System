@@ -1,16 +1,18 @@
 package group1.e04.data;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class Course {
-    
-    private final String id;
-    private final String name;
-    private final String credit;
+
+    private String id;
+    private String name;
+    private int credit;
+    private String facultyName;
+    private int maxStudent;
+    private int currentStudent;
 }
