@@ -7,13 +7,37 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import group1.e04.data.Student;
+import group1.e04.model.Student;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class JdbcStudentRepository implements DataRepository<Student> {
 
     private Connection connection;
+
+    public boolean addCourseToStudent(String studentId, String courseId) {
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "INSERT INTO register VALUES(?, ?)");
+            statement.setString(1, studentId);
+            statement.setString(2, courseId);
+            int rowEffected = statement.executeUpdate();
+            if (rowEffected == 1) {
+                connection.commit();
+                return true;
+            } else {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public List<String> findAllCoursesAreLearning(String studentId) {
         PreparedStatement statement;
@@ -73,9 +97,11 @@ public class JdbcStudentRepository implements DataRepository<Student> {
             statement.setString(5, student.getEmail());
             statement.setString(6, student.get_class());
             int rowEffected = statement.executeUpdate();
-            if (rowEffected > 0) {
+            if (rowEffected == 1) {
                 connection.commit();
                 return true;
+            } else {
+                connection.rollback();
             }
         } catch (SQLException e) {
             try {
@@ -106,8 +132,6 @@ public class JdbcStudentRepository implements DataRepository<Student> {
                 student.set_class(resultSet.getString("class"));
                 student.setCourseIds(findAllCoursesAreLearning(student.getId()));
                 return student;
-            } else {
-                return null;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -126,9 +150,13 @@ public class JdbcStudentRepository implements DataRepository<Student> {
             statement.setString(4, student.getEmail());
             statement.setString(5, student.get_class());
             statement.setString(6, student.getId());
-            statement.executeUpdate();
-            connection.commit();
-            return true;
+            int rowEffected = statement.executeUpdate();
+            if (rowEffected == 1) {
+                connection.commit();
+                return true;
+            } else {
+                connection.rollback();
+            }
         } catch (SQLException e) {
             try {
                 connection.rollback();

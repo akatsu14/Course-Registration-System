@@ -5,8 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import group1.e04.data.Account;
-import group1.e04.data.Account.Role;
+import group1.e04.model.Account;
+import group1.e04.model.Account.Role;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -44,22 +44,27 @@ public class JdbcAccountRepository {
             statement.setString(1, account.getUsername());
             statement.setString(2, account.getPassword());
             statement.setString(3, account.getRole().name());
-            statement.executeUpdate();
+            int rowEffected = 0;
+            rowEffected += statement.executeUpdate();
             if (account.getRole().compareTo(Role.STUDENT) == 0) {
                 PreparedStatement statement2 = connection.prepareStatement(
                         "UPDATE student SET account_id=? WHERE id=?");
                 statement2.setString(1, account.getUsername());
                 statement2.setString(2, userId);
-                statement2.executeUpdate();
+                rowEffected += statement2.executeUpdate();
             } else if (account.getRole().compareTo(Role.FACULTY) == 0) {
                 PreparedStatement statement2 = connection.prepareStatement(
                         "UPDATE faculty SET account_id=? WHERE id=?");
                 statement2.setString(1, account.getUsername());
                 statement2.setString(2, userId);
-                statement2.executeUpdate();
+                rowEffected += statement2.executeUpdate();
             }
-            connection.commit();
-            return true;
+            if (rowEffected == 2) {
+                connection.commit();
+                return true;
+            } else {
+                connection.rollback();
+            }
         } catch (SQLException e) {
             try {
                 connection.rollback();
@@ -78,9 +83,13 @@ public class JdbcAccountRepository {
                     "UPDATE account SET password=? WHERE username=?");
             statement.setString(1, password);
             statement.setString(2, username);
-            statement.executeUpdate();
-            connection.commit();
-            return true;
+            int rowEffected = statement.executeUpdate();
+            if (rowEffected == 1) {
+                connection.commit();
+                return true;
+            } else {
+                connection.rollback();
+            }
         } catch (SQLException e) {
             try {
                 connection.rollback();
