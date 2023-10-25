@@ -168,6 +168,7 @@ public class LoginView {
                 System.out.println(
                         "Mật khẩu là " + new String(inputPass.getPassword()));
                 StudentView frame = new StudentView();
+                frame.setVisible(true);
             }
         });
 
